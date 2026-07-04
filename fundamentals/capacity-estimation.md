@@ -1,6 +1,6 @@
 # Capacity Estimation — The Back-of-Envelope Playbook
 
-Capacity estimation plays a meaningful role in Google's system design interviews
+Capacity estimation plays a meaningful role in staff-level system design interviews
 because **scale influences almost every decision that follows**. If a system serves
 100M daily active users, how many requests per second is that? How much storage
 after a year? What happens at 10× traffic? At what point does a single database
@@ -21,7 +21,7 @@ I need to shard" or "so this fits in memory" is doing its job.
 | 1 million (MB) | 10⁶ | A small image |
 | 1 billion (GB) | 10⁹ | Fits in RAM on one box |
 | 1 trillion (TB) | 10¹² | Needs many disks / sharding |
-| 1 quadrillion (PB) | 10¹⁵ | Google-scale, distributed FS |
+| 1 quadrillion (PB) | 10¹⁵ | internet-scale, distributed FS |
 
 ### Time → seconds (for QPS math)
 - 1 day = **86,400 seconds** (memorize as ~10⁵)
