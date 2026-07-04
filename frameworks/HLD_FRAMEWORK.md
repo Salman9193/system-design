@@ -1,6 +1,6 @@
 # HLD Framework — The 45-Minute Staff-Level Approach
 
-This is the time-boxed structure Google evaluates you against in a system design
+This is the time-boxed structure interviewers evaluate you against in a system design
 round. The round is ~45 minutes. The interviewer is scoring specific dimensions,
 and each has a rough time budget. Overspending in one area means leaving points
 on the table in another.
@@ -14,7 +14,7 @@ on the table in another.
 | 1. Requirements & scope | 3–5 min | 10–15% | Did you ask the right questions and scope well? |
 | 2. Capacity estimation | 3–5 min | 10% | Can you turn scale into concrete numbers? |
 | 3. High-level design | 8–10 min | 20–25% | Right components, clear data flow, justified choices |
-| 4. Deep dives (2–3 components) | 20–25 min | 25–30% | **This is what separates L5 from L6** |
+| 4. Deep dives (2–3 components) | 20–25 min | 25–30% | **This is what separates senior from staff** |
 | 5. Trade-offs & failure modes | 5–7 min | 15–20% | What did you give up? What breaks? How do you recover? |
 
 **The single biggest mistake:** spending 20 minutes on the high-level design and
@@ -25,7 +25,7 @@ that instinct.
 
 ## Phase 1 — Requirements & Scope (3–5 min)
 
-The prompt is deliberately ambiguous. Google is scoring whether you can define the
+The prompt is deliberately ambiguous. the interviewer is scoring whether you can define the
 problem before solving it. **Do not start drawing boxes.**
 
 ### Functional requirements
@@ -97,7 +97,7 @@ decision-making under uncertainty, which is exactly what's scored.
 
 ---
 
-## Phase 4 — Deep Dives (20–25 min) — THE L5/L6 BOUNDARY
+## Phase 4 — Deep Dives (20–25 min) — THE SENIOR/STAFF BOUNDARY
 
 This is the largest block of time and the highest-signal phase. The interviewer
 will pick 2–3 components and drill. Often **they** push you here ("how does the
@@ -108,7 +108,7 @@ component, since that's where the hard problems are."*
 ### What a deep dive covers
 For each chosen component:
 - **The core mechanism** — not the tool name, the actual algorithm/data structure.
-  Google will say "set the managed service aside and show me how it works."
+  the interviewer will say "set the managed service aside and show me how it works."
 - **The bottleneck** — where does it break under load? Hot keys, thundering herd,
   write amplification, tail latency?
 - **The fix** — and its cost. Every fix trades something.
@@ -116,15 +116,15 @@ For each chosen component:
 ### The "inside the tools" test
 When you say "I'll use Kafka," the interviewer may ask *how Kafka guarantees
 ordering* or *how you'd build the processing yourself*. Naming a black box and
-being unable to open it is the classic L5-capped signal. The `fundamentals/`
+being unable to open it is the classic senior-capped signal. The `fundamentals/`
 directory exists to make sure you can always open the box.
 
 ---
 
 ## Phase 5 — Trade-offs & Failure Modes (5–7 min)
 
-At L6 this is **not optional and often not prompted** — you're expected to raise it
-yourself. Skipping it caps you at L5.
+At staff this is **not optional and often not prompted** — you're expected to raise it
+yourself. Skipping it caps you at the senior level.
 
 ### Trade-offs
 For every major decision, state what you gave up. "I chose eventual consistency
@@ -160,7 +160,7 @@ you're asked, and never leave a black box unopened.
 | Failure mode | Why it caps you | The fix |
 |--------------|-----------------|---------|
 | Jumping to boxes before requirements | Reads as template memorization | Spend the first 3–5 min on scope |
-| Listing tools without opening them | The L5 ceiling | Explain the mechanism inside |
+| Listing tools without opening them | The senior ceiling | Explain the mechanism inside |
 | No trade-off talk | Reads as shallow | Narrate what you gave up, unprompted |
 | Ignoring where your design breaks | "Can't reason about scale" | Know your breaking point + fallback |
 | Skipping observability | Explicit 2026 rubric points lost | Treat monitoring as a core component |
