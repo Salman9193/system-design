@@ -391,7 +391,7 @@ a:hover{text-decoration:underline}
   border-left:3px solid transparent}
 .nav-link:hover{background:var(--accent-soft);text-decoration:none}
 .nav-link.active{background:var(--accent-soft);border-left-color:var(--accent);color:var(--accent);font-weight:600}
-.main{flex:1;padding:2.5rem 3rem;min-width:0;max-width:900px}
+.main{flex:1;padding:2.5rem 3rem;min-width:0}
 .page{display:none}
 .page.active{display:block}
 .page-title{font-size:1.9rem;margin:0 0 1.5rem;padding-bottom:.5rem}
