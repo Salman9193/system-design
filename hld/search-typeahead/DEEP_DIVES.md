@@ -1,7 +1,7 @@
 # Search Typeahead — Deep Dives
 
 This is where the interview is won or lost. The deep dives get ~25 of the 45
-minutes and are the L5/L6 boundary. Each one opens a black box the interviewer will
+minutes and are the senior/staff boundary. Each one opens a black box the interviewer will
 push you into. Drive these proactively.
 
 ---
