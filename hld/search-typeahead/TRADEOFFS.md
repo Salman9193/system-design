@@ -1,6 +1,6 @@
 # Search Typeahead — Trade-offs
 
-At L6 you're expected to name what you gave up for every major decision, unprompted.
+At staff you're expected to name what you gave up for every major decision, unprompted.
 This file catalogs the trade-offs baked into the design so you can surface them
 deliberately. A design presented without its trade-offs reads as shallow, however
 correct it is.
