@@ -5,7 +5,7 @@ clean, extensible object model: the right classes, interfaces, relationships, an
 design patterns. Where HLD is about boxes and data flow at scale, LLD is about the
 code-level structure inside one service.
 
-At Google this surfaces in coding rounds ("design a parking lot / rate limiter /
+This surfaces in coding rounds ("design a parking lot / rate limiter /
 notification system as classes"), in the RRK (role-related knowledge) round for
 backend staff roles, and as the "set the black box aside, build it yourself" turn
 inside an HLD round.
@@ -50,7 +50,7 @@ design to interfaces, not concretions.
 
 ### 7. Address concurrency & edge cases
 Thread safety, null handling, capacity limits, what happens on invalid input. At
-staff level, concurrency is usually where the depth is.
+the staff level, concurrency is usually where the depth is.
 
 ---
 
