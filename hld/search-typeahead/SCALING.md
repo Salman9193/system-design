@@ -1,7 +1,7 @@
 # Search Typeahead — Scaling, Multi-Region & Cost
 
 The operational-reality file: how the system scales geographically, what it costs,
-and how it evolves. At L6 these are expected without being asked — owning the system
+and how it evolves. At staff these are expected without being asked — owning the system
 end-to-end means owning its global footprint and its bill.
 
 ---
@@ -56,7 +56,7 @@ is completely fine for suggestions. No cross-region coordination on the hot path
 
 ---
 
-## Cost Reasoning (the L6 differentiator)
+## Cost Reasoning (the staff differentiator)
 
 Naming the expensive parts and how you'd control them is a staff signal. The costs
 here:
@@ -98,7 +98,7 @@ A staff engineer designs for the system's future, not just its launch:
 3. **+ Personalization:** per-user signal blended at the service layer for logged-in
    users (accepting the edge-cache hit).
 4. **+ Context:** location/time-of-day ranking adjustments.
-5. **+ Fuzzy matching:** tolerate typos ("gogle" → "google") via edit-distance
+5. **+ Fuzzy matching:** tolerate typos ("seach" → "search") via edit-distance
    search over the Trie or a separate correction layer.
 6. **+ Entity suggestions:** extend beyond query strings to structured entities
    (people, places, products) with their own ranking signals.
