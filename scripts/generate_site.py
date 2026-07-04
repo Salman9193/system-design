@@ -510,14 +510,14 @@ def render(sections):
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>System Design Prep — Google L6</title>
+<title>System Design Prep — Staff Engineer</title>
 <style>{CSS}</style>
 </head>
 <body>
 <button class="menu-toggle" aria-label="Menu">&#9776;</button>
 <div class="layout">
   <nav class="sidebar">
-    <h1>System Design Prep<span class="sub">Google Staff Engineer (L6)</span></h1>
+    <h1>System Design Prep<span class="sub">Staff Engineer</span></h1>
     {nav_html}
   </nav>
   <main class="main">
