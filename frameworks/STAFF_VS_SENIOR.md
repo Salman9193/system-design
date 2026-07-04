@@ -1,9 +1,9 @@
-# Staff vs Senior — What Makes an Answer L6, Not L5
+# Staff vs Senior — What Makes an Answer Staff, Not Senior
 
-The single most common reason for downleveling at the staff level is giving an
-**L5-quality answer in an L6 loop**. The same question, the same clean
-architecture, the same reasonable choices — an L4 gets a strong score, an L5 gets
-"solid," and an L6 gets "not yet ready" and a downlevel offer.
+The single most common reason for downleveling at the staff level is giving a
+**senior-quality answer in a staff loop**. The same question, the same clean
+architecture, the same reasonable choices — a mid-level candidate gets a strong score, a senior candidate gets
+"solid," and a staff candidate gets "not yet ready" and a downlevel offer.
 
 The jump between levels is **not about knowing more technologies**. It's about
 demonstrating increasingly sophisticated judgment. This document makes that
@@ -13,7 +13,7 @@ boundary explicit.
 
 ## The Core Difference in One Sentence
 
-> An L5 candidate produces a correct design when asked. An L6 candidate **owns the
+> A senior candidate produces a correct design when asked. A staff candidate **owns the
 > system end-to-end** — proactively surfacing failure modes, operational reality,
 > cost, and multi-region concerns **without being asked**.
 
@@ -23,17 +23,17 @@ boundary explicit.
 
 ### The question: "Design a system to store and serve user notifications."
 
-**L5 answer (solid, but capped):**
+**Senior answer (solid, but capped):**
 - Clarifies read/write ratio, sketches API
 - Draws: client → API → queue → workers → DB → push service
 - Chooses Cassandra for the notification store, justifies with write-heavy access
 - Adds a cache for the unread-count read path
 - Explains the data flow clearly
 
-This is a **good design**. It would pass at L4 and score "solid" at L5. At L6 it's
+This is a **good design**. It would pass at the mid level and score "solid" at the senior level. At staff it's
 incomplete — because it stops at the architecture.
 
-**L6 answer (everything above, plus, unprompted):**
+**Staff answer (everything above, plus, unprompted):**
 - "Let me address what happens when the push provider (APNs/FCM) is down — I'll
   queue with exponential backoff and a dead-letter queue, and degrade to
   in-app-only delivery so the user still sees notifications on next open."
@@ -55,9 +55,9 @@ reasoning, cost, scale limits, and multi-region** — raised proactively.
 
 ---
 
-## The Dimensions That Separate L5 from L6
+## The Dimensions That Separate Senior from Staff
 
-| Dimension | L5 behavior | L6 behavior |
+| Dimension | Senior behavior | Staff behavior |
 |-----------|-------------|-------------|
 | **Driving** | Answers the interviewer's follow-ups | Drives the conversation; raises the next topic first |
 | **Failure modes** | Discusses when asked | Proactively: "let me address what breaks here" |
@@ -74,7 +74,7 @@ reasoning, cost, scale limits, and multi-region** — raised proactively.
 
 ## The "Push You Off the Shelf" Test
 
-Google interviewers deliberately push candidates off memorized architectures. Real
+Interviewers at the staff level deliberately push candidates off memorized architectures. Real
 reported examples:
 
 - A candidate proposed a **graph database** to compute connection degrees. The
@@ -84,11 +84,11 @@ reported examples:
   interviewer asked how he'd **implement the processing himself**.
 
 The signal: do you understand what's happening *inside* the tools, or can you only
-name them? This is the clearest L5/L6 discriminator, and it's why this repo has a
+name them? This is the clearest senior/staff discriminator, and it's why this repo has a
 large `fundamentals/` section — every black box must be openable.
 
-**L5 move:** "I'll use Kafka for the event stream."
-**L6 move:** "I'll use a log-based message queue — Kafka-style. The key property I
+**Senior move:** "I'll use Kafka for the event stream."
+**Staff move:** "I'll use a log-based message queue — Kafka-style. The key property I
 need is partitioned ordering: events with the same key land on the same partition
 and are consumed in order. Under the hood that's an append-only commit log per
 partition with consumer offsets; if I had to build it, I'd..."
@@ -127,13 +127,13 @@ Keep these in your pocket. Saying them *before* being asked is the tell:
 
 The hiring committee reads a written packet. **The interviewer can only write down
 what you said.** Vague answers produce vague evidence, weighted lightly. Specific,
-quotable, proactive statements are what get you the L6 packet.
+quotable, proactive statements are what get you the staff-level packet.
 
 ---
 
 ## The Bottom Line
 
-L5 is "can you produce a correct design?" L6 is "can you own this system in
+Senior is "can you produce a correct design?" Staff is "can you own this system in
 production, anticipate how it fails, reason about its cost, and drive the technical
-conversation?" Study the architecture to pass L5. Study the **failure modes,
-operations, and trade-offs** to pass L6.
+conversation?" Study the architecture to pass senior. Study the **failure modes,
+operations, and trade-offs** to pass staff.
