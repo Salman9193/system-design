@@ -1,8 +1,8 @@
 # Caching — Eviction, Invalidation, and Write Strategies
 
 Caching is the single most common lever for making reads fast, and it's one of the
-first places a Google interviewer will push you "inside the tool." Saying "I'll add
-a cache" is an L4 move. Explaining *where* it sits, *what* it evicts, *how* it stays
+first places an interviewer will push you "inside the tool." Saying "I'll add
+a cache" is an mid-level move. Explaining *where* it sits, *what* it evicts, *how* it stays
 consistent with the source of truth, and *how* it fails is the staff-level depth.
 
 ---
@@ -48,7 +48,7 @@ A cache is finite, so it must evict. The policy is a deep-dive question.
 
 **LRU** is the default answer and worth knowing cold — it's a HashMap + doubly
 linked list giving O(1) get and put (this is LeetCode #146, and it's not a
-coincidence that it's a Google favorite). **LFU** (LeetCode #460) is the follow-up
+coincidence that it's a common interview favorite). **LFU** (LeetCode #460) is the follow-up
 when the interviewer says "but popular items should stay even if not just accessed."
 
 Modern production caches often use **hybrids** (e.g. TinyLFU / W-TinyLFU in Caffeine)
@@ -138,7 +138,7 @@ inconsistency. The trade-off you're making:
 > Caching trades **consistency for latency and load reduction**. You accept a window
 > where the cache may be stale, in exchange for fast reads and a protected DB.
 
-At L6, name this explicitly: "I'm using cache-aside with a 60-second TTL, so reads
+At the staff level, name this explicitly: "I'm using cache-aside with a 60-second TTL, so reads
 can be up to 60 seconds stale — that's acceptable for a follower count but not for
 an account balance, where I'd read through to the DB or use write-through."
 
@@ -155,4 +155,4 @@ When you add a cache in a design, be ready to answer:
 5. **What happens** on a hot key, a stampede, or a cache-node failure?
 
 Answering these unprompted is exactly the "own it end-to-end" signal that separates
-L6 from L5.
+staff from senior.
