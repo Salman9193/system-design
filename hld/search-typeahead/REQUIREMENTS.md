@@ -3,7 +3,7 @@
 **Prompt:** Design the autocomplete system that powers search suggestions — as the
 user types, show the top few most likely completions in real time.
 
-This is a Google-flavored favorite: it looks simple, but the interviewer can drill
+This is a classic favorite: it looks simple, but the interviewer can drill
 into Trie-at-scale, ranking, caching, and sharding — every rubric dimension. It
 also connects directly to the DSA Trie work (`implement-trie`, `word-search-ii`).
 
@@ -14,7 +14,7 @@ also connects directly to the DSA Trie work (`implement-trie`, `word-search-ii`)
 **Do not start drawing.** Pin down what "autocomplete" means here.
 
 ### Clarifying questions worth asking
-- Are we suggesting **search queries** (like Google search box) or **entities**
+- Are we suggesting **search queries** (like a search engine's box) or **entities**
   (contacts, products)? → *Assume search queries.*
 - Suggestions ranked by **global popularity**, or **personalized**? → *Start global,
   add personalization as an extension.*
@@ -33,7 +33,7 @@ also connects directly to the DSA Trie work (`implement-trie`, `word-search-ii`)
 3. Match on prefix (typing "new y" → "new york", "new york times", ...).
 
 ### Explicitly out of scope (state this — scoping is a staff signal)
-- Spell correction / fuzzy matching ("gogle" → "google") — flag as an extension.
+- Spell correction / fuzzy matching ("seach" → "search") — flag as an extension.
 - Full search execution — we only produce *suggestions*, not results.
 - Personalization and per-user history — start global, note where it plugs in.
 
