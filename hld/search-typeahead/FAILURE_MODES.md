@@ -1,6 +1,6 @@
 # Search Typeahead — Failure Modes & Observability
 
-At L6, failure modes and observability are expected proactively — they're now
+At the staff level, failure modes and observability are expected proactively — they're now
 first-class rubric items in 2026, not bonus topics. This file walks what breaks, how
 you detect it, and how you recover. Raise these yourself: *"Before I wrap up, let me
 cover how this fails and how we'd know."*
@@ -98,7 +98,7 @@ cover how this fails and how we'd know."*
 > roll back the last build with one action."
 
 That concrete runbook — naming the first dashboard on-call checks — is the
-operational-maturity signal that reads as L6.
+operational-maturity signal that reads as staff-level.
 
 ---
 
