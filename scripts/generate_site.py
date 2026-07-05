@@ -30,6 +30,18 @@ OUT_DIR = os.path.join(ROOT, "site")
 HLD_ORDER = ["REQUIREMENTS", "DESIGN", "DEEP_DIVES", "TRADEOFFS", "FAILURE_MODES", "SCALING", "AI_EVOLUTION"]
 LLD_ORDER = ["PROBLEM", "DESIGN", "Solution", "NOTES"]
 
+# Sidebar ordering for the Fundamentals section (by file/dir stem). Foundational
+# topics first, AI-engineering topics last. Unlisted items fall to the end,
+# alphabetically. Applies to both flat .md files and multi-tab folders.
+FUNDAMENTALS_ORDER = [
+    "communication",
+    "capacity-estimation",
+    "caching",
+    "ai-engineering-primer",
+    "llm-inference-serving",
+    "embeddings-and-vector-search",
+]
+
 
 # ─────────────────────────────────────────────────────────────────────────────
 # Helpers
@@ -52,23 +64,44 @@ def read_file(path):
 
 ACRONYMS = {"Ai": "AI", "Rag": "RAG", "Llm": "LLM", "Api": "API", "Hld": "HLD",
             "Lld": "LLD", "Kv": "KV", "Ml": "ML", "Ann": "ANN", "Gpu": "GPU",
-            "Id": "ID", "Url": "URL", "Sql": "SQL", "Http": "HTTP"}
+            "Id": "ID", "Url": "URL", "Sql": "SQL", "Http": "HTTP", "Tcp": "TCP",
+            "Udp": "UDP", "Ip": "IP", "Tls": "TLS", "Rpc": "RPC", "Grpc": "gRPC",
+            "Rest": "REST", "Soap": "SOAP", "Graphql": "GraphQL", "Sse": "SSE",
+            "Dns": "DNS", "Cdn": "CDN", "Jwt": "JWT", "Mtls": "mTLS", "Quic": "QUIC"}
+
+# Connector words rendered lowercase (unless first) for natural titles.
+SMALL_WORDS = {"and", "or", "vs", "the", "of", "to", "a", "an", "in", "on",
+               "for", "with", "via", "per"}
 
 
-def _fix_acronyms(s):
-    """Title-case mangles acronyms (AI -> Ai); restore known ones."""
-    return " ".join(ACRONYMS.get(w, w) for w in s.split(" "))
+def prettify(base):
+    """Turn a file/dir stem into a display title.
+
+    Strips a leading numeric ordering prefix (01_, 02-), title-cases, restores
+    known acronyms, and lowercases connector words except the first.
+    e.g. 05_API_GATEWAY_AND_LOAD_BALANCING -> API Gateway and Load Balancing
+    """
+    base = re.sub(r"^\d+[_-]", "", base)
+    words = base.replace("_", " ").replace("-", " ").title().split()
+    out = []
+    for idx, w in enumerate(words):
+        if w in ACRONYMS:
+            out.append(ACRONYMS[w])
+        elif idx != 0 and w.lower() in SMALL_WORDS:
+            out.append(w.lower())
+        else:
+            out.append(w)
+    return " ".join(out)
 
 
 def title_from_filename(fn):
-    """DEEP_DIVES.md -> Deep Dives ; AI_EVOLUTION.md -> AI Evolution"""
-    base = os.path.splitext(fn)[0]
-    return _fix_acronyms(base.replace("_", " ").title())
+    """DEEP_DIVES.md -> Deep Dives ; 02_TRANSPORT_PROTOCOLS.md -> Transport Protocols"""
+    return prettify(os.path.splitext(fn)[0])
 
 
 def title_from_dirname(d):
-    """search-typeahead -> Search Typeahead ; rag-knowledge-assistant -> RAG Knowledge Assistant"""
-    return _fix_acronyms(d.replace("-", " ").title())
+    """search-typeahead -> Search Typeahead ; communication -> Communication"""
+    return prettify(d)
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -326,15 +359,43 @@ def discover():
     if fw_pages:
         sections.append({"id": "frameworks", "title": "Frameworks", "pages": fw_pages})
 
-    # Fundamentals — flat md files
+    # Fundamentals — a flat .md is a single-page doc; a folder is a multi-tab
+    # page (tabs ordered by numeric filename prefix). Section order is set by
+    # FUNDAMENTALS_ORDER (unlisted fall to the end, alphabetically).
     fu_pages = []
-    for path in sorted(glob.glob(os.path.join(ROOT, "fundamentals", "*.md"))):
-        fn = os.path.basename(path)
-        fu_pages.append({
-            "id": "fu-" + slugify(os.path.splitext(fn)[0]),
-            "title": title_from_filename(fn),
-            "tabs": [{"title": title_from_filename(fn), "html": md_to_html(read_file(path))}],
-        })
+    fbase = os.path.join(ROOT, "fundamentals")
+    if os.path.isdir(fbase):
+        def fu_key(name):
+            stem = os.path.splitext(name)[0]
+            rank = FUNDAMENTALS_ORDER.index(stem) if stem in FUNDAMENTALS_ORDER else len(FUNDAMENTALS_ORDER)
+            return (rank, name)
+
+        for name in sorted(os.listdir(fbase), key=fu_key):
+            path = os.path.join(fbase, name)
+            if os.path.isfile(path) and name.endswith(".md"):
+                stem = os.path.splitext(name)[0]
+                fu_pages.append({
+                    "id": "fu-" + slugify(stem),
+                    "title": title_from_filename(name),
+                    "tabs": [{"title": title_from_filename(name), "html": md_to_html(read_file(path))}],
+                })
+            elif os.path.isdir(path):
+                tab_files = sorted(f for f in os.listdir(path)
+                                   if f.endswith(".md") or f.endswith(".java"))
+                tabs = []
+                for f in tab_files:  # numeric prefixes sort correctly
+                    content = read_file(os.path.join(path, f))
+                    if f.endswith(".java"):
+                        tab_html = f'<pre><code>{highlight_java(content)}</code></pre>'
+                    else:
+                        tab_html = md_to_html(content)
+                    tabs.append({"title": title_from_filename(f), "html": tab_html})
+                if tabs:
+                    fu_pages.append({
+                        "id": "fu-" + slugify(name),
+                        "title": title_from_dirname(name),
+                        "tabs": tabs,
+                    })
     if fu_pages:
         sections.append({"id": "fundamentals", "title": "Fundamentals", "pages": fu_pages})
 
