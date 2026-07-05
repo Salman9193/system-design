@@ -92,7 +92,7 @@ written to that bar.
 
 **Complete:**
 - ✅ Frameworks (HLD, LLD, Staff vs Senior, **AI System Design**)
-- ✅ Fundamentals: **Communication** (multi-tab: protocols, APIs, gateway/LB, auth, observability), capacity estimation, caching
+- ✅ Fundamentals: **Communication**, **Networking** (both multi-tab), capacity estimation, caching
 - ✅ AI fundamentals: **AI engineering primer, LLM inference & serving, embeddings & vector search**
 - ✅ HLD template: Search Typeahead / Autocomplete (with an **AI Evolution** tab)
 - ✅ **AI HLD template: RAG Knowledge Assistant**
@@ -106,8 +106,17 @@ timeline, chat/messaging, distributed rate limiter.
 **Queued (AI HLD):** recommendation system, semantic search, AI agent platform,
 real-time ML feature store, content moderation, ML training pipeline.
 
-**Queued (fundamentals):** sharding & partitioning, replication & consensus,
-consistency models, message queues, databases, auth & security, observability deep-dive.
+**Fundamentals curriculum (planned, in build order):** the fundamentals are organized
+into three tiers. ✅ = built.
+
+- **Tier 1 — Foundations:** ✅ Communication · ✅ Networking · (2) Storage & databases ·
+  (3) Data distribution (sharding, replication, consistency, consensus)
+- **Tier 2 — Cross-cutting:** ✅ Caching · (4) Async & messaging · (5) Performance
+  (latency, throughput, the tradeoff, scalability) · (6) Authentication & security
+- **Tier 3 — Operating:** (7) Reliability & fault tolerance · (8) Observability &
+  monitoring · (9) CI/CD & deployment
+
+Also complete: capacity estimation, and the AI-engineering fundamentals below.
 
 **Queued (LLD):** parking lot, notification service, elevator system, in-memory
 key-value store; **AI LLD:** semantic cache, agent tool-dispatcher, conversation
@@ -135,6 +144,6 @@ and know when *not* to use it.**
 
 ---
 
-> Last updated: 2026-07-05 — added the Communication fundamental (multi-tab: transport/
-> application protocols, API paradigms, gateway & load balancing, auth & observability)
-> and multi-tab support for large fundamentals.
+> Last updated: 2026-07-05 — added the Networking fundamental (network model, IP & ports,
+> DNS, CDN, proxies & NAT, network security) and locked the tiered fundamentals curriculum
+> into the roadmap above.
