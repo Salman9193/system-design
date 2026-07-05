@@ -92,7 +92,7 @@ written to that bar.
 
 **Complete:**
 - ✅ Frameworks (HLD, LLD, Staff vs Senior, **AI System Design**)
-- ✅ Fundamentals: **Communication**, **Networking** (both multi-tab), capacity estimation, caching
+- ✅ Fundamentals: **Communication**, **Networking**, **Storage & databases** (all multi-tab), capacity estimation, caching
 - ✅ AI fundamentals: **AI engineering primer, LLM inference & serving, embeddings & vector search**
 - ✅ HLD template: Search Typeahead / Autocomplete (with an **AI Evolution** tab)
 - ✅ **AI HLD template: RAG Knowledge Assistant**
@@ -109,7 +109,7 @@ real-time ML feature store, content moderation, ML training pipeline.
 **Fundamentals curriculum (planned, in build order):** the fundamentals are organized
 into three tiers. ✅ = built.
 
-- **Tier 1 — Foundations:** ✅ Communication · ✅ Networking · (2) Storage & databases ·
+- **Tier 1 — Foundations:** ✅ Communication · ✅ Networking · ✅ Storage & databases ·
   (3) Data distribution (sharding, replication, consistency, consensus)
 - **Tier 2 — Cross-cutting:** ✅ Caching · (4) Async & messaging · (5) Performance
   (latency, throughput, the tradeoff, scalability) · (6) Authentication & security
@@ -144,6 +144,5 @@ and know when *not* to use it.**
 
 ---
 
-> Last updated: 2026-07-05 — added the Networking fundamental (network model, IP & ports,
-> DNS, CDN, proxies & NAT, network security) and locked the tiered fundamentals curriculum
-> into the roadmap above.
+> Last updated: 2026-07-05 — added the Storage & databases fundamental (storage types,
+> relational & ACID, NoSQL families, SQL vs NoSQL, indexing, transactions & isolation).
