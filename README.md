@@ -92,7 +92,7 @@ written to that bar.
 
 **Complete:**
 - ✅ Frameworks (HLD, LLD, Staff vs Senior, **AI System Design**)
-- ✅ Fundamentals: capacity estimation, caching
+- ✅ Fundamentals: **Communication** (multi-tab: protocols, APIs, gateway/LB, auth, observability), capacity estimation, caching
 - ✅ AI fundamentals: **AI engineering primer, LLM inference & serving, embeddings & vector search**
 - ✅ HLD template: Search Typeahead / Autocomplete (with an **AI Evolution** tab)
 - ✅ **AI HLD template: RAG Knowledge Assistant**
@@ -107,7 +107,7 @@ timeline, chat/messaging, distributed rate limiter.
 real-time ML feature store, content moderation, ML training pipeline.
 
 **Queued (fundamentals):** sharding & partitioning, replication & consensus,
-consistency models, message queues, load balancing, databases, observability.
+consistency models, message queues, databases, auth & security, observability deep-dive.
 
 **Queued (LLD):** parking lot, notification service, elevator system, in-memory
 key-value store; **AI LLD:** semantic cache, agent tool-dispatcher, conversation
@@ -135,6 +135,6 @@ and know when *not* to use it.**
 
 ---
 
-> Last updated: 2026-07-05 — added the AI engineering track: AI framework, 3 AI
-> fundamentals, 2 AI HLD templates, 1 AI LLD template, and an AI Evolution tab on
-> search-typeahead.
+> Last updated: 2026-07-05 — added the Communication fundamental (multi-tab: transport/
+> application protocols, API paradigms, gateway & load balancing, auth & observability)
+> and multi-tab support for large fundamentals.
