@@ -35,6 +35,7 @@ LLD_ORDER = ["PROBLEM", "DESIGN", "Solution", "NOTES"]
 # alphabetically. Applies to both flat .md files and multi-tab folders.
 FUNDAMENTALS_ORDER = [
     "communication",
+    "networking",
     "capacity-estimation",
     "caching",
     "ai-engineering-primer",
@@ -67,7 +68,10 @@ ACRONYMS = {"Ai": "AI", "Rag": "RAG", "Llm": "LLM", "Api": "API", "Hld": "HLD",
             "Id": "ID", "Url": "URL", "Sql": "SQL", "Http": "HTTP", "Tcp": "TCP",
             "Udp": "UDP", "Ip": "IP", "Tls": "TLS", "Rpc": "RPC", "Grpc": "gRPC",
             "Rest": "REST", "Soap": "SOAP", "Graphql": "GraphQL", "Sse": "SSE",
-            "Dns": "DNS", "Cdn": "CDN", "Jwt": "JWT", "Mtls": "mTLS", "Quic": "QUIC"}
+            "Dns": "DNS", "Cdn": "CDN", "Jwt": "JWT", "Mtls": "mTLS", "Quic": "QUIC",
+            "Nat": "NAT", "Vpn": "VPN", "Vpc": "VPC", "Cidr": "CIDR", "Ssl": "SSL",
+            "Oauth": "OAuth", "Rbac": "RBAC", "Abac": "ABAC", "Acid": "ACID",
+            "Slo": "SLO", "Sla": "SLA", "Sli": "SLI", "Bgp": "BGP", "Cap": "CAP"}
 
 # Connector words rendered lowercase (unless first) for natural titles.
 SMALL_WORDS = {"and", "or", "vs", "the", "of", "to", "a", "an", "in", "on",
