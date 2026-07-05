@@ -91,20 +91,50 @@ written to that bar.
 ## Roadmap
 
 **Complete:**
-- ✅ Frameworks (HLD, LLD, Staff vs Senior)
+- ✅ Frameworks (HLD, LLD, Staff vs Senior, **AI System Design**)
 - ✅ Fundamentals: capacity estimation, caching
-- ✅ HLD template: Search Typeahead / Autocomplete
+- ✅ AI fundamentals: **AI engineering primer, LLM inference & serving, embeddings & vector search**
+- ✅ HLD template: Search Typeahead / Autocomplete (with an **AI Evolution** tab)
+- ✅ **AI HLD template: RAG Knowledge Assistant**
+- ✅ **AI HLD template: LLM Inference Serving Platform**
 - ✅ LLD template: Rate Limiter
+- ✅ **AI LLD template: LLM Model Gateway / Router**
 
 **Queued (HLD):** YouTube, Maps, cloud file storage, URL shortener, Twitter
 timeline, chat/messaging, distributed rate limiter.
+
+**Queued (AI HLD):** recommendation system, semantic search, AI agent platform,
+real-time ML feature store, content moderation, ML training pipeline.
 
 **Queued (fundamentals):** sharding & partitioning, replication & consensus,
 consistency models, message queues, load balancing, databases, observability.
 
 **Queued (LLD):** parking lot, notification service, elevator system, in-memory
-key-value store.
+key-value store; **AI LLD:** semantic cache, agent tool-dispatcher, conversation
+memory manager.
 
 ---
 
-> Last updated: 2026-07-05 — initial build: frameworks, fundamentals, HLD + LLD templates
+## The AI Engineering Track
+
+Staff-level system design now includes AI. This repo threads AI engineering through
+the same structure as everything else — following a **traditional → AI** progression
+rather than treating AI as a separate silo:
+
+- `frameworks/AI_SYSTEM_DESIGN.md` — what changes when a model enters the system: eval
+  instead of unit tests, hallucination/guardrails, cost-per-token, non-determinism,
+  the data flywheel, the training/serving split.
+- `fundamentals/ai-engineering-primer.md`, `llm-inference-serving.md`,
+  `embeddings-and-vector-search.md` — the AI black boxes to open (don't just name a
+  vector DB — explain ANN; don't just call an LLM — explain batching and the KV cache).
+- AI HLDs (RAG assistant, LLM serving) and the AI LLD (model gateway) apply it end to
+  end, and even the traditional search-typeahead design gets an AI Evolution tab.
+
+The recurring staff signal: **adopt ML where it earns its place, know what it costs,
+and know when *not* to use it.**
+
+---
+
+> Last updated: 2026-07-05 — added the AI engineering track: AI framework, 3 AI
+> fundamentals, 2 AI HLD templates, 1 AI LLD template, and an AI Evolution tab on
+> search-typeahead.
