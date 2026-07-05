@@ -27,7 +27,7 @@ OUT_DIR = os.path.join(ROOT, "site")
 
 # Preferred tab ordering within a system (files not listed fall to the end,
 # alphabetical). Mirrors the natural interview flow.
-HLD_ORDER = ["REQUIREMENTS", "DESIGN", "DEEP_DIVES", "TRADEOFFS", "FAILURE_MODES", "SCALING"]
+HLD_ORDER = ["REQUIREMENTS", "DESIGN", "DEEP_DIVES", "TRADEOFFS", "FAILURE_MODES", "SCALING", "AI_EVOLUTION"]
 LLD_ORDER = ["PROBLEM", "DESIGN", "Solution", "NOTES"]
 
 
@@ -50,15 +50,25 @@ def read_file(path):
         return f.read()
 
 
+ACRONYMS = {"Ai": "AI", "Rag": "RAG", "Llm": "LLM", "Api": "API", "Hld": "HLD",
+            "Lld": "LLD", "Kv": "KV", "Ml": "ML", "Ann": "ANN", "Gpu": "GPU",
+            "Id": "ID", "Url": "URL", "Sql": "SQL", "Http": "HTTP"}
+
+
+def _fix_acronyms(s):
+    """Title-case mangles acronyms (AI -> Ai); restore known ones."""
+    return " ".join(ACRONYMS.get(w, w) for w in s.split(" "))
+
+
 def title_from_filename(fn):
-    """DEEP_DIVES.md -> Deep Dives ; Solution.java -> Solution"""
+    """DEEP_DIVES.md -> Deep Dives ; AI_EVOLUTION.md -> AI Evolution"""
     base = os.path.splitext(fn)[0]
-    return base.replace("_", " ").title()
+    return _fix_acronyms(base.replace("_", " ").title())
 
 
 def title_from_dirname(d):
-    """search-typeahead -> Search Typeahead"""
-    return d.replace("-", " ").title()
+    """search-typeahead -> Search Typeahead ; rag-knowledge-assistant -> RAG Knowledge Assistant"""
+    return _fix_acronyms(d.replace("-", " ").title())
 
 
 # ─────────────────────────────────────────────────────────────────────────────
