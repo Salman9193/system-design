@@ -36,6 +36,7 @@ LLD_ORDER = ["PROBLEM", "DESIGN", "Solution", "NOTES"]
 FUNDAMENTALS_ORDER = [
     "communication",
     "networking",
+    "storage-and-databases",
     "capacity-estimation",
     "caching",
     "ai-engineering-primer",
@@ -71,7 +72,8 @@ ACRONYMS = {"Ai": "AI", "Rag": "RAG", "Llm": "LLM", "Api": "API", "Hld": "HLD",
             "Dns": "DNS", "Cdn": "CDN", "Jwt": "JWT", "Mtls": "mTLS", "Quic": "QUIC",
             "Nat": "NAT", "Vpn": "VPN", "Vpc": "VPC", "Cidr": "CIDR", "Ssl": "SSL",
             "Oauth": "OAuth", "Rbac": "RBAC", "Abac": "ABAC", "Acid": "ACID",
-            "Slo": "SLO", "Sla": "SLA", "Sli": "SLI", "Bgp": "BGP", "Cap": "CAP"}
+            "Slo": "SLO", "Sla": "SLA", "Sli": "SLI", "Bgp": "BGP", "Cap": "CAP",
+            "Nosql": "NoSQL", "Newsql": "NewSQL"}
 
 # Connector words rendered lowercase (unless first) for natural titles.
 SMALL_WORDS = {"and", "or", "vs", "the", "of", "to", "a", "an", "in", "on",
