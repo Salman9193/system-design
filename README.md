@@ -99,6 +99,7 @@ written to that bar.
 - ✅ **AI HLD template: LLM Inference Serving Platform**
 - ✅ LLD template: Rate Limiter
 - ✅ **AI LLD template: LLM Model Gateway / Router**
+- ✅ LLD template: Vending Machine (State · Strategy · Singleton · Factory · Observer; bounded-DP coin-change change-making — bridges the DSA coin-change problem)
 
 **Queued (HLD):** YouTube, Maps, cloud file storage, URL shortener, Twitter
 timeline, chat/messaging, distributed rate limiter.
