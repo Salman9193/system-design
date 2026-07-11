@@ -406,6 +406,40 @@ def discover():
     if fu_pages:
         sections.append({"id": "fundamentals", "title": "Fundamentals", "pages": fu_pages})
 
+    # LLD Fundamentals — design-pattern reference (same layout rules as Fundamentals:
+    # a flat .md is single-page, a folder is a multi-tab page ordered by filename).
+    lf_pages = []
+    lfbase = os.path.join(ROOT, "lld-fundamentals")
+    if os.path.isdir(lfbase):
+        for name in sorted(os.listdir(lfbase)):
+            path = os.path.join(lfbase, name)
+            if os.path.isfile(path) and name.endswith(".md"):
+                stem = os.path.splitext(name)[0]
+                lf_pages.append({
+                    "id": "lf-" + slugify(stem),
+                    "title": title_from_filename(name),
+                    "tabs": [{"title": title_from_filename(name), "html": md_to_html(read_file(path))}],
+                })
+            elif os.path.isdir(path):
+                tab_files = sorted(f for f in os.listdir(path)
+                                   if f.endswith(".md") or f.endswith(".java"))
+                tabs = []
+                for f in tab_files:
+                    content = read_file(os.path.join(path, f))
+                    if f.endswith(".java"):
+                        tab_html = f'<pre><code>{highlight_java(content)}</code></pre>'
+                    else:
+                        tab_html = md_to_html(content)
+                    tabs.append({"title": title_from_filename(f), "html": tab_html})
+                if tabs:
+                    lf_pages.append({
+                        "id": "lf-" + slugify(name),
+                        "title": title_from_dirname(name),
+                        "tabs": tabs,
+                    })
+    if lf_pages:
+        sections.append({"id": "lld-fundamentals", "title": "LLD Fundamentals", "pages": lf_pages})
+
     # HLD / LLD — dir per system, multi-tab
     for kind, order in (("hld", HLD_ORDER), ("lld", LLD_ORDER)):
         pages = []
