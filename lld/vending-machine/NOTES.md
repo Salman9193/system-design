@@ -1,5 +1,9 @@
 # Vending Machine — Notes & Trade-offs
 
+> **Design-patterns reference:** for the intent, structure, and trade-offs of each pattern
+> used here — State, Strategy, Singleton, Factory, Observer — see
+> [LLD Fundamentals → Design Patterns](#lf-design-patterns).
+
 ## Why State beats status flags
 
 The naive version threads a `status` enum through every method:
@@ -29,9 +33,11 @@ from the DSA problem of the same name:
 - **Impossible change**: when the DP target is unreachable, the sale is aborted and the
   balance refunded — the real-world consequence of `coinChange` returning `-1`.
 
-> Revision hook: read `dynamic-programming/coin-change` in the DSA repo alongside
-> `BoundedDPChangeStrategy` here — same recurrence, one returns a count, the other returns
-> the coins to physically drop.
+> Revision hook: read the
+> [Coin Change problem (dsa-problems)](https://salman9193.github.io/dsa-problems/) — Dynamic
+> Programming → Coin Change — alongside `BoundedDPChangeStrategy` here. Same recurrence: one
+> returns a count, the other returns the coins to physically drop. Source:
+> [github.com/Salman9193/dsa-problems](https://github.com/Salman9193/dsa-problems/tree/main/dynamic-programming/coin-change).
 
 ## Thread-safety
 
