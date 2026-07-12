@@ -28,7 +28,7 @@ OUT_DIR = os.path.join(ROOT, "site")
 # Preferred tab ordering within a system (files not listed fall to the end,
 # alphabetical). Mirrors the natural interview flow.
 HLD_ORDER = ["REQUIREMENTS", "DESIGN", "DEEP_DIVES", "TRADEOFFS", "FAILURE_MODES", "SCALING", "AI_EVOLUTION"]
-LLD_ORDER = ["PROBLEM", "DESIGN", "Solution", "NOTES"]
+LLD_ORDER = ["PROBLEM", "DESIGN", "ROADMAP", "JVM_PRIMER", "Solution", "NOTES"]
 
 # Sidebar ordering for the Fundamentals section (by file/dir stem). Foundational
 # topics first, AI-engineering topics last. Unlisted items fall to the end,
@@ -74,7 +74,8 @@ ACRONYMS = {"Ai": "AI", "Rag": "RAG", "Llm": "LLM", "Api": "API", "Hld": "HLD",
             "Nat": "NAT", "Vpn": "VPN", "Vpc": "VPC", "Cidr": "CIDR", "Ssl": "SSL",
             "Oauth": "OAuth", "Rbac": "RBAC", "Abac": "ABAC", "Acid": "ACID",
             "Slo": "SLO", "Sla": "SLA", "Sli": "SLI", "Bgp": "BGP", "Cap": "CAP",
-            "Nosql": "NoSQL", "Newsql": "NewSQL", "Pacelc": "PACELC", "Crdt": "CRDT"}
+            "Nosql": "NoSQL", "Newsql": "NewSQL", "Pacelc": "PACELC", "Crdt": "CRDT",
+            "Jvm": "JVM", "Ast": "AST", "Ir": "IR"}
 
 # Connector words rendered lowercase (unless first) for natural titles.
 SMALL_WORDS = {"and", "or", "vs", "the", "of", "to", "a", "an", "in", "on",
