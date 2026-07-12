@@ -100,6 +100,7 @@ written to that bar.
 - ✅ LLD template: Rate Limiter
 - ✅ **AI LLD template: LLM Model Gateway / Router**
 - ✅ LLD template: Vending Machine (State · Strategy · Singleton · Factory · Observer; bounded-DP coin-change change-making — bridges the DSA coin-change problem)
+- 🚧 **LLD project: Java Compiler (MiniJava → JVM bytecode)** — long-running, phase-by-phase (lexer → parser → semantic → IR → codegen → `.class`); Visitor/Composite/Interpreter/Builder; doubles as DSA + JVM-fundamentals practice
 
 **Queued (HLD):** YouTube, Maps, cloud file storage, URL shortener, Twitter
 timeline, chat/messaging, distributed rate limiter.
