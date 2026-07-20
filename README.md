@@ -92,6 +92,7 @@ written to that bar.
 
 **Complete:**
 - ✅ Frameworks (HLD, LLD, Staff vs Senior, **AI System Design**)
+- ✅ Fundamentals: **Database Scaling in Practice** (the ladder from one box to sharding; RDS · Aurora · Vitess · Bigtable · Spanner · DynamoDB)
 - ✅ Fundamentals: **Communication**, **Networking**, **Storage & databases**, **Data distribution** (all multi-tab), capacity estimation, caching
 - ✅ AI fundamentals: **AI engineering primer, LLM inference & serving, embeddings & vector search**
 - ✅ HLD template: Search Typeahead / Autocomplete (with an **AI Evolution** tab)
