@@ -97,10 +97,12 @@ written to that bar.
 - ✅ HLD template: Search Typeahead / Autocomplete (with an **AI Evolution** tab)
 - ✅ **AI HLD template: RAG Knowledge Assistant**
 - ✅ **AI HLD template: LLM Inference Serving Platform**
+- ✅ HLD template: Text Segmentation Service (dictionary versioning, index/query consistency, multi-tenant overlays — the productionized jieba)
 - ✅ LLD template: Rate Limiter
 - ✅ **AI LLD template: LLM Model Gateway / Router**
 - ✅ LLD template: Vending Machine (State · Strategy · Singleton · Factory · Observer; bounded-DP coin-change change-making — bridges the DSA coin-change problem)
 - ✅ LLD template: Job Scheduler (Strategy · State · Observer · Builder · Template Method; priority heap + Kahn topological sort + #621 cooldown — bridges three DSA problems)
+- ✅ LLD template: Chinese Word Segmenter / jieba-style (Strategy · Builder · Decorator · Singleton · Flyweight; prefix dictionary + DAG + max-log-probability DP + HMM/Viterbi — bridges Word Break #139/#140)
 - 🚧 **LLD project: Java Compiler (MiniJava → JVM bytecode)** — long-running, phase-by-phase (lexer → parser → semantic → IR → codegen → `.class`); Visitor/Composite/Interpreter/Builder; doubles as DSA + JVM-fundamentals practice
 
 **Queued (HLD):** YouTube, Maps, cloud file storage, URL shortener, Twitter
