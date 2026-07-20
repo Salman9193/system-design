@@ -38,6 +38,7 @@ FUNDAMENTALS_ORDER = [
     "networking",
     "storage-and-databases",
     "data-distribution",
+    "database-scaling",
     "capacity-estimation",
     "caching",
     "ai-engineering-primer",
