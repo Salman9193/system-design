@@ -116,3 +116,22 @@ The through-line for scaling a RAG system: you are always balancing **quality**
 every lever trades among these three, and the eval harness is what lets you make those
 trades deliberately instead of blindly — measure the quality impact of every
 cost-saving move before shipping it.
+
+---
+
+## The Metadata Database
+
+Vector search gets the attention, but a RAG system's **metadata store** (documents, chunks,
+permissions, versions, ingestion state) is an ordinary database with ordinary scaling limits — and
+it's usually what breaks first.
+
+| Concern | Pattern | Reference |
+|---------|---------|-----------|
+| Chunk metadata grows with the corpus | shard by `document_id` or `tenant_id` | [Database Scaling](#fu-database-scaling) |
+| Permission checks on every query | **must be strongly consistent** — primary reads, not replicas | [Scaling Ladder](#fu-database-scaling) |
+| Ingestion state machine | keep a job's rows on one shard so it stays transactional | [Sharded Database Platform](#hld-sharded-database-platform) |
+| Re-embedding the corpus | copy → verify → switch to a new index version | [Sharded Database Platform](#hld-sharded-database-platform) |
+
+**The permissions row is the one with teeth.** Serving a stale replica read for an access check means
+showing a user a document they've just been removed from. **Freshness requirements are per-query, and
+authorisation is always on the strict side of that line.**
