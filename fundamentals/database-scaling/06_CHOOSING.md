@@ -106,6 +106,9 @@ database signals the opposite.
 - **Theory:** [Storage & Databases](#fu-storage-and-databases),
   [Data Distribution](#fu-data-distribution) (partitioning, replication, consistency, CAP,
   consensus), [Caching](#fu-caching).
+- **Applied:** [**Sharded Database Platform**](#hld-sharded-database-platform) — the full 7-tab HLD
+  that *designs* the middleware layer described in the Sharding Middleware tab (online resharding,
+  split-brain prevention, lookup vindexes, connection pooling math).
 - **Applied:** [Search Typeahead](#hld-search-typeahead),
   [Text Segmentation Service](#hld-text-segmentation-service) (versioned artifacts and the
   copy→verify→switch rollout pattern),
