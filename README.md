@@ -98,6 +98,7 @@ written to that bar.
 - ✅ HLD template: Search Typeahead / Autocomplete (with an **AI Evolution** tab)
 - ✅ **AI HLD template: RAG Knowledge Assistant**
 - ✅ **AI HLD template: LLM Inference Serving Platform**
+- ✅ **HLD template: Sharded Database Platform** (design Vitess: online resharding, split-brain prevention, lookup vindexes, connection pooling)
 - ✅ HLD template: Text Segmentation Service (dictionary versioning, index/query consistency, multi-tenant overlays — the productionized jieba)
 - ✅ LLD template: Rate Limiter
 - ✅ **AI LLD template: LLM Model Gateway / Router**
