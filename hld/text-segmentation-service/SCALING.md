@@ -76,3 +76,26 @@ The base dictionary grows with language coverage and tenants:
 - **A dictionary update that forces a full reindex of 10⁹ docs can cost more than months of
   serving.** That economic fact is precisely why dual-tokenization and staged rollout exist — the
   design choice is driven by reindex cost, not by segmentation cost.
+
+---
+
+## Why the Dictionary Rollout Is a Database Pattern
+
+The dictionary-versioning protocol in this design isn't specific to NLP — it's the **same protocol
+used to reshard a live database**:
+
+```
+copy  →  catch up  →  VERIFY  →  switch  →  retire
+```
+
+| Here | In a sharded database |
+|------|----------------------|
+| build the new dictionary artifact | bulk-copy rows to new shards |
+| dual-tokenize during migration | tail the change stream to catch up |
+| **canary recall eval (blocking)** | **checksum source vs target (blocking)** |
+| flip the version pointer | atomically update the shard map |
+| keep the old artifact for rollback | keep the source read-only for a window |
+
+**The invariant is identical: never cut over on faith, and make the step before the cutover
+reversible.** See [Sharded Database Platform → Deep Dives](#hld-sharded-database-platform) for the
+database version, and [Database Scaling](#fu-database-scaling) for where it sits in the ladder.
