@@ -107,3 +107,23 @@ Each step is additive and plugs into the two-path architecture without redesigni
 it — which is itself a sign the original design was sound. Naming this roadmap
 unprompted shows you're thinking about the system's lifecycle, not just passing the
 interview.
+
+---
+
+## The Data Layer Underneath
+
+Typeahead's serving path is an in-memory index, but the **source of truth** for query logs,
+popularity counters, and personalisation state is a database — and it faces the same ladder every
+other system does.
+
+| Concern here | Pattern | Reference |
+|--------------|---------|-----------|
+| Popularity counters (write-heavy, tolerant of lag) | async replicas; batch/debounce the writes | [Scaling Ladder](#fu-database-scaling) |
+| Query logs (append-only, enormous) | LSM-backed store (Bigtable/Cassandra), **not** a B-tree RDBMS | [Native Scale-Out](#fu-database-scaling) |
+| Per-user personalisation | shard by `user_id` — it's in every query | [Sharded Database Platform](#hld-sharded-database-platform) |
+| Index rebuild from source | copy → verify → switch, never mutate in place | [Sharded Database Platform](#hld-sharded-database-platform) |
+
+**The reason counters are the interesting case:** they're the classic hot-key problem. A globally
+trending query is a single row taking enormous write traffic, and *sharding cannot split one key*.
+The fix is aggregation before the database — count in memory, flush periodically — not a better
+shard key.
