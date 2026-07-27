@@ -71,6 +71,20 @@ tuning, which is the operational cost you're accepting.
 > Contrast with [Indexing](#fu-storage-and-databases): B-trees optimise reads and in-place updates;
 > LSM-trees optimise writes and pay at read/compaction time.
 
+**What the memtable actually *is*:** that "in-memory sorted buffer" is, in LevelDB, RocksDB, and
+Cassandra, very often a **skip list** — a probabilistic sorted structure with `O(log n)` inserts and,
+crucially, **easy concurrent insertion** (a skip-list insert splices local pointers instead of
+rotating subtrees like a balanced tree). Writes land in the skip-list memtable, which stays sorted so
+the flush emits an ordered SSTable directly; compaction then k-way-merges those SSTables. The skip
+list is the **in-memory half** of the LSM write path.
+
+> Structure and algorithm:
+> [Design Skiplist #1206](https://salman9193.github.io/dsa-problems/#design/design-skiplist)
+> (why randomization replaces rebalancing) and
+> [Merge K Sorted Lists](https://salman9193.github.io/dsa-problems/#linked-list/merge-k-sorted-lists)
+> (the compaction merge). **Redis sorted sets (ZSET)** use the same skip-list structure for ranked
+> queries and range scans.
+
 ### Row Key Design Is the Whole Game
 
 Because rows are sorted, the row key determines both locality **and** hotspots:
