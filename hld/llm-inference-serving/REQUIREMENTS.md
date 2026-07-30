@@ -108,3 +108,52 @@ See `fundamentals/llm-inference-serving.md` for the mechanics.
 
 That framing names the scarce resource (GPU memory), the unit (tokens), the core
 component (the scheduler), and the central tension (throughput vs latency) up front.
+
+---
+
+## Engineering Blogs & Primary Sources
+
+LLM inference serving has an exceptionally clean primary-source lineage: two landmark papers
+(continuous batching, then paged KV-cache) plus the open-source engine that productionized them. Each
+maps directly onto this HLD's scheduler-centric design.
+
+- **Orca — "A Distributed Serving System for Transformer-Based Generative Models" (OSDI 2022).**
+  https://www.usenix.org/conference/osdi22/presentation/yu
+  The paper that introduced **iteration-level (continuous) scheduling** — the core of this HLD's
+  scheduler tab. Instead of waiting for a whole static batch to finish, it admits/evicts requests
+  **every token step**, so a finished sequence is immediately replaced. Reported up to **36.9× the
+  throughput** of prior serving at equal latency. This *is* the "continuous batching" this HLD builds
+  around. → backs the **Design** (scheduler) tab.
+
+- **vLLM / PagedAttention — "Efficient Memory Management for LLM Serving with PagedAttention"
+  (SOSP 2023).** https://arxiv.org/abs/2309.06180
+  The other half: naive serving **pre-allocates KV-cache for each request's max length, wasting
+  60–80% of GPU memory to fragmentation.** PagedAttention applies the **OS virtual-memory paging
+  model** to the KV cache — fixed-size blocks allocated on demand — cutting waste by an order of
+  magnitude and enabling far larger batches. This is exactly this HLD's **KV-cache manager** and its
+  "KV cache is the binding constraint" thesis. Complementary to Orca: *Orca schedules, PagedAttention
+  stores.* → backs the **Design** (KV-cache) and **Deep Dives** tabs.
+
+- **vLLM — "Inside vLLM: Anatomy of a High-Throughput LLM Inference System" (2025).**
+  https://vllm.ai/blog/2025-09-05-anatomy-of-vllm
+  The reference open-source engine's own walkthrough — continuous batching, prefix caching,
+  speculative decoding, multi-GPU serving, and scheduling, all in one place. The production instance
+  of everything this HLD designs. → backs the **Design** and **Scaling** tabs.
+
+- **Anyscale — "How Continuous Batching Enables 23x Throughput in LLM Inference" (2023).**
+  https://www.anyscale.com/blog/continuous-batching-llm-inference
+  The clearest explainer of static-vs-continuous batching with real benchmarks (**up to 23×** over
+  naive HuggingFace serving), and a lucid account of the **padding/idle-slot waste** that continuous
+  batching eliminates — this HLD's "GPU never idles waiting for the slowest request" point, quantified.
+  → backs the **Requirements** (why batching matters) and **Trade-offs** tabs.
+
+- **NVIDIA — TensorRT-LLM.** https://github.com/NVIDIA/TensorRT-LLM
+  The compile-for-the-GPU alternative: worse flexibility, but **20–40% more throughput** than vLLM for
+  a single well-defined model on Hopper hardware via graph compilation. The concrete instance of this
+  HLD's **build-vs-adopt / flexibility-vs-peak-throughput** trade-off. → backs the **Trade-offs** tab.
+
+**The through-line:** every production serving stack converges on the same two ideas this HLD centers
+— **continuous batching** (keep the GPU full by scheduling per token, not per batch) and **paged
+KV-cache** (stop wasting memory on max-length pre-allocation). Orca and PagedAttention are
+complementary halves of one design, and vLLM is where they meet in shipping code — which is why the
+scheduler and the KV-cache manager are the two components this HLD spends its complexity budget on.
