@@ -78,3 +78,51 @@ cannot naively run one process per tenant.
 
 Full-text search itself (see [Search Typeahead](#hld-search-typeahead)), model training, and
 translation. This service produces tokens; consumers do the rest.
+
+---
+
+## Engineering Blogs & Primary Sources
+
+Chinese/CJK segmentation as a production search concern is well-documented by the search-engine
+vendors, and jieba itself is the reference implementation. These confirm the specific claims this HLD
+makes — most importantly, the index/query dictionary-consistency spine.
+
+- **jieba — the reference segmenter.** https://github.com/fxsjy/jieba
+  The prefix-dictionary + DAG + max-probability-route + HMM-Viterbi design this service productionizes.
+  Its README documents the four cut modes and the user-dictionary mechanism that the
+  [Chinese Word Segmenter LLD](#lld-chinese-word-segmenter) implements. → the whole design's source.
+
+- **Elastic — Smart Chinese Analysis plugin (`analysis-smartcn`).**
+  https://www.elastic.co/guide/en/elasticsearch/plugins/current/analysis-smartcn.html
+  Elasticsearch's official Chinese analyzer: *"uses probabilistic knowledge to find the optimal word
+  segmentation… text is first broken into sentences, then each sentence is segmented into words"* — a
+  **Hidden Markov Model** over a training corpus, i.e. exactly the algorithm in this service. Confirms
+  the design isn't academic: this is how a production search engine tokenizes Chinese. → backs the
+  **Design** tab.
+
+- **mimacom — "你们好: Elasticsearch and the Chinese language" (2019).**
+  https://blog.mimacom.com/elasticsearch-chinese-language/
+  A hands-on account that surfaces this HLD's spine directly: the analyzer plugin **must be installed
+  on every node, and every node restarted** — a version/consistency constraint identical to this HLD's
+  *"index-time and query-time segmentation must use the same dictionary version."* Also shows the
+  Traditional-vs-Simplified pitfall (a mismatched dictionary silently mis-tokenizes). → backs the
+  **Failure Modes** (dictionary skew) tab.
+
+- **elastic/elasticsearch-analysis-smartcn (source).**
+  https://github.com/elastic/elasticsearch-analysis-smartcn
+  The plugin source — how Lucene's `SmartChineseAnalyzer` is wired into a distributed search engine as
+  a versioned, deployable artifact. Real-world instance of the **dictionary-as-artifact** model. →
+  backs the **Design** (versioned artifact) tab.
+
+- **IK Analyzer / jieba ES plugins (`elasticsearch-analysis-ik`, `elasticsearch-jieba-plugin`).**
+  https://github.com/medcl/elasticsearch-analysis-ik
+  The most-used community Chinese analyzers, notable for **hot-reloadable dictionaries** (`ik_max_word`
+  vs `ik_smart` = jieba's full vs. default modes) — the exact **dual-mode** and **dynamic dictionary**
+  features this HLD specifies, shipped in production. → backs the **Design** (modes) and **Deep Dives**
+  (dictionary rollout) tabs.
+
+**The through-line:** the search-engine vendors independently productionize *this exact design* — an
+HMM/dictionary segmenter as a **versioned, per-node analyzer artifact**, with the hard operational
+constraint that **every node must run the same version** or tokenization diverges. That constraint,
+which this HLD elevates to its central thesis (index/query recall silently breaks on a version
+mismatch), is visible in every one of these deployment guides.
