@@ -54,6 +54,11 @@ data. Unrecoverable.**
    with the most committed transactions; then reparent the others to it. Promoting a lagging replica
    *is* write loss.
 
+> **The algorithm that makes safe promotion possible is consensus** — specifically Raft's
+> election restriction (only a node with an up-to-date log can win) and step-down-on-higher-term.
+> See [Consensus → Raft Deep Dive](#fu-data-distribution) for exactly how leader election avoids
+> split-brain.
+
 **The durability chain:** a write is only acknowledged after it's durable on the primary **and**
 (for semi-synchronous setups) acknowledged by at least one replica. **Async replication means
 failover can lose the tail of the log** — that's the trade, and it must be a conscious one.
