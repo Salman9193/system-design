@@ -115,6 +115,10 @@ operation:
   obvious over-limit locally, only consult Redis near the threshold); or sync counts
   periodically and accept slight over-limiting for lower latency.
 
+> **The full distributed treatment** — sharding the store, the local fast path, fail-open vs.
+> fail-closed, hot keys, and multi-region — is its own HLD:
+> [Distributed Rate Limiter](#hld-distributed-rate-limiter).
+
 The beauty: **the `RateLimitStrategy` interface is unchanged.** Only the state
 backing changes from an in-memory map to Redis. That's clean design paying off.
 
