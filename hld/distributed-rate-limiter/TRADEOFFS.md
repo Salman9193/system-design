@@ -25,9 +25,10 @@ is the complexity of reconciling two views — which the rest of these trades ma
 | Cost | cheapest | expensive | cheap | cheap (Lua) |
 
 **Chosen: sliding-window counter as default; token bucket where bursts should be allowed.** The
-counter gives smooth limiting at O(1) memory and <1% error (Cloudflare's published result); token
-bucket is the pick when a short burst up to a cap is desirable (most API quotas). Fixed window only
-when its boundary hole is genuinely acceptable and you want the absolute cheapest path.
+counter gives smooth limiting at O(1) memory and ~0.003% error on Cloudflare's published 400M-request
+analysis; token bucket is the pick when a short burst up to a cap is desirable (most API quotas).
+Fixed window only when its boundary hole is genuinely acceptable and you want the absolute cheapest
+path.
 
 ---
 
