@@ -231,9 +231,17 @@ def inline_md(text):
     text = re.sub(r"\*\*([^*]+)\*\*", r"<strong>\1</strong>", text)
     # italic (avoid matching bold leftovers)
     text = re.sub(r"(?<!\*)\*(?!\*)([^*]+)\*(?!\*)", r"<em>\1</em>", text)
-    # links
+    # links (markdown [text](url) first)
     text = re.sub(r"\[([^\]]+)\]\(([^)]+)\)",
                   r'<a href="\2" target="_blank" rel="noopener">\1</a>', text)
+    # bare URLs: linkify any http(s):// not already inside an href="..." or anchor body.
+    # Split on existing <a ...>...</a> so we never touch already-linked segments.
+    parts = re.split(r'(<a\s[^>]*>.*?</a>)', text)
+    url_re = re.compile(r'(?<!["\'>=])(https?://[^\s<>()\[\]"]+)')
+    for idx in range(0, len(parts), 2):  # even indices are the non-anchor segments
+        parts[idx] = url_re.sub(
+            r'<a href="\1" target="_blank" rel="noopener">\1</a>', parts[idx])
+    text = "".join(parts)
     return text
 
 
