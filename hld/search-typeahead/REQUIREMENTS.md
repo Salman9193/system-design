@@ -102,3 +102,47 @@ See `fundamentals/capacity-estimation.md` for the method.
 That sentence tells the interviewer you've already identified the binding
 constraint (latency), the shape of the load (read-heavy, keystroke-level), and the
 central technique (precompute + cache), before drawing a single box.
+
+---
+
+## Engineering Blogs & Primary Sources
+
+The trie + precomputed-top-K design here isn't hypothetical — it's what production search bars run,
+though at scale the trie is usually compiled into an **FST (finite-state transducer)** for memory
+density. These sources map onto the tabs in this HLD.
+
+- **Elastic — "Elasticsearch autocomplete: search as you type, query time & more" (Elasticsearch
+  Labs).** https://www.elastic.co/search-labs/blog/elasticsearch-autocomplete-search
+  Elasticsearch's **completion suggester is FST-backed** — the production form of the in-memory prefix
+  structure this HLD's serving path describes. Critically, it lays out the **index-time vs. query-time
+  trade-off** that is the spine of this design: index-time (precompute) is fast to serve but needs
+  reindexing on updates; query-time is easy but costly per keystroke. → backs the **Design** (serving
+  vs. build path) and **Trade-offs** tabs.
+
+- **Elastic — `search_as_you_type` field type (reference docs).**
+  https://www.elastic.co/guide/en/elasticsearch/reference/current/search-as-you-type.html
+  The shingle-based alternative to the completion suggester — infix matching, not just prefix. Useful
+  contrast for the **Deep Dives** discussion of prefix-only vs. mid-phrase matching, and a real
+  example of the storage-vs-flexibility trade (edge n-grams inflate the index).
+
+- **Apache Lucene — FSTs (finite state transducers).**
+  https://lucene.apache.org/core/9_0_0/core/org/apache/lucene/util/fst/package-summary.html
+  The data structure underneath Elasticsearch/Solr suggesters: a trie **with shared suffixes**, which
+  is why 10M queries fit in a few hundred MB in memory. This is the compaction the **Scaling** tab's
+  "800 MB fits in memory" claim relies on in practice. Ties directly to
+  [Implement Trie #208](https://salman9193.github.io/dsa-problems/#strings/implement-trie) and
+  [Balanced Search Trees](https://salman9193.github.io/dsa-problems/#guides/BALANCED_TREES).
+
+- **"How We Built Prefixy: A Scalable Prefix Search Service for Powering Autocomplete" (2018).**
+  https://medium.com/@prefixyproject/how-we-built-prefixy-a-scalable-prefix-search-service-for-powering-autocomplete-c20f98e2eff1
+  A from-scratch autocomplete service using a **hash-of-prefixes + bounded top-K per prefix** (drop the
+  lowest-scored completion, add the new one at removed+1) with Redis/Memcached for the distributed
+  cache — a concrete instance of this HLD's "precompute top-K, cache hot prefixes" pattern. → backs the
+  **Design** (top-K per node) tab.
+
+**A note on honesty:** autocomplete engineering writeups are less centralized than rate limiting's
+(Cloudflare/Stripe/GitHub) — the strongest *primary* sources are the search-engine vendors whose
+suggesters productionize exactly this design. The Prefixy post is the clearest end-to-end
+"we-built-this" account. The **through-line** all of them share matches this HLD: *a prefix structure
+(trie/FST) with ranking precomputed at write time, held in memory, so each keystroke is a lookup —
+never a computation.*
