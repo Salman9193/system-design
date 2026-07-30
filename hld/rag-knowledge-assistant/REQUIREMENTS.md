@@ -105,3 +105,45 @@ See `fundamentals/capacity-estimation.md` and `ai-engineering-primer.md`.
 That framing names the loop (retrieve-then-generate), the four hard parts
 (retrieval, hallucination, permissions, cost), and the AI-native way to verify it
 (eval) — before drawing a box.
+
+---
+
+## Engineering Blogs & Primary Sources
+
+RAG has an unusually clean lineage: one founding paper, then a wave of engineering writeups solving
+the practical failures (bad chunks, weak retrieval). These map onto this HLD's tabs.
+
+- **Lewis et al. (2020) — "Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks."**
+  https://arxiv.org/abs/2005.11401
+  The paper that named RAG. Its core thesis is this HLD's foundation: combine **parametric memory**
+  (the model's weights) with **non-parametric memory** (an external retrieval index) so answers are
+  grounded in retrieved passages, not just recalled — improving factual accuracy and **provenance**
+  (you can cite the source). → backs the **Requirements** (why retrieve at all) framing.
+
+- **Anthropic — "Introducing Contextual Retrieval" (2024).**
+  https://www.anthropic.com/news/contextual-retrieval
+  The most actionable improvement to the naive pipeline, and it validates two of this HLD's points at
+  once: (1) **hybrid retrieval** — combining embeddings with **BM25 lexical search** beats either
+  alone (this HLD's "optionally hybrid" retriever step); (2) naive chunking **loses context**, so
+  prepend an LLM-generated context blurb to each chunk before embedding. Reports large retrieval-
+  failure reductions from these two changes. → backs the **Design** (hybrid retrieve) and **Deep
+  Dives** (chunking) tabs.
+
+- **Pinecone — "Retrieval-Augmented Generation" and the vector-DB learn series.**
+  https://www.pinecone.io/learn/retrieval-augmented-generation/
+  The vector-database vendor's practical guide to the serving path this HLD draws: embedding, **ANN
+  search**, top-k retrieval, and the metadata-filtering that this HLD makes load-bearing for
+  **permission-filtered retrieval**. Also the two-stage retrieve-then-rerank pattern
+  (https://www.pinecone.io/learn/two-stage-retrieval/) that the Design tab's rerank step uses. →
+  backs the **Design** (ANN + rerank) and **Scaling** tabs.
+
+- **Anthropic — Model Context Protocol (MCP).** https://modelcontextprotocol.io/
+  The emerging standard for connecting models to external tools and data sources — the productionized,
+  standardized form of "the retriever fetches from your systems." Relevant to how this HLD's
+  ingestion connectors evolve. → context for **AI Evolution**.
+
+**A note on honesty:** unlike rate limiting, RAG's best sources split into **one academic paper**
+(Lewis, the origin) plus **vendor engineering guides** (Anthropic, Pinecone) — the field is young
+enough that the canonical "we ran this at scale for years" retrospective doesn't exist yet. The
+**through-line** they share is this HLD's spine: *retrieval quality dominates answer quality, so the
+engineering is in chunking, hybrid retrieval, and reranking — the generation model is the easy part.*
