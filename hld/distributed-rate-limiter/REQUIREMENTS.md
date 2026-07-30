@@ -85,3 +85,57 @@ approximate global coordination**, not a database call per request.
 
 DDoS mitigation at the network edge (that's a different layer — scrubbing centers, SYN cookies),
 and per-request *authentication* (the limiter keys off identity but doesn't establish it).
+
+---
+
+## Engineering Blogs & Primary Sources
+
+This design isn't hypothetical — the biggest infrastructure companies have published how they built
+exactly this. Reading these turns the tabs here from "textbook" into "here's how it actually went in
+production." Each is keyed to the tab it most reinforces.
+
+- **Cloudflare — "How we built rate limiting capable of scaling to millions of domains" (2017).**
+  https://blog.cloudflare.com/counting-things-a-lot-of-different-things/
+  The canonical sliding-window-counter writeup, with **real accuracy numbers**: on 400M requests
+  from 270k sources, only **0.003%** were wrongly allowed or limited (avg 6% rate gap). Also the
+  source of the **async-increment + mitigation-flag** trick — increment counters off the request
+  path, and once a client is over the limit, cache that decision in server memory so subsequent
+  requests are blocked with *no store lookup at all.* → backs the **Design** (sliding counter) and
+  **Scaling** (local fast path) tabs.
+
+- **GitHub — "How we scaled the GitHub API with a sharded, replicated rate limiter in Redis"
+  (2021).** https://github.blog/engineering/infrastructure/how-we-scaled-github-api-sharded-replicated-rate-limiter-redis/
+  Memcached → Redis migration with **client-side sharding, one primary + read replicas per cluster,
+  and Lua scripts for atomicity.** Crucially documents two failures this HLD warns about: a **shared
+  cache evicting rate-limit data let users circumvent limits**, and routing to different data centers
+  broke counting. The feature-flag'd, percentage-based rollout is the copy→verify→switch pattern. →
+  backs the **Deep Dives** (atomicity/sharding) and **Failure Modes** tabs.
+
+- **Stripe — "Scaling your API with rate limiters" (Paul Tarjan, 2017).**
+  https://stripe.com/blog/rate-limiters
+  Four *complementary* limiter types (request-rate, concurrent-request, fleet-usage, worker-usage),
+  and the operational discipline this HLD stresses: **hook limiters in so a bug or a Redis outage
+  fails safe, gate them behind feature flags, and watch metrics for how often they trigger.** The
+  companion gist has the production Ruby+Redis Lua. → backs the **Trade-offs** (multiple rules) and
+  **Failure Modes** (fail-safe) tabs.
+
+- **Brandur Leach — "Rate Limiting, Cells, and GCRA" (2015).** https://brandur.org/rate-limiting
+  The clearest explanation of **GCRA** (the generic cell rate algorithm — token bucket without a
+  background refill process), and the basis of the `redis-cell` module. → deepens the **Design**
+  (algorithms) tab.
+
+- **ClassDojo — "Better Rate Limiting With Redis Sorted Sets" (2015).**
+  https://engineering.classdojo.com/blog/2015/02/06/rolling-rate-limiter/
+  The sliding-window-**log** implemented with Redis sorted sets (`ZADD`/`ZREMRANGEBYSCORE`/`ZCARD`) —
+  the exact tradeoff this HLD flags (exact but O(requests) memory). → the **Design** tab's sliding-log
+  entry.
+
+- **envoyproxy/ratelimit** (reference implementation). https://github.com/envoyproxy/ratelimit
+  A production gRPC rate-limit *service* with a descriptor hierarchy and two-Redis topology — what the
+  **gateway/sidecar placement** trade-off in this HLD looks like as real, deployable code. → backs the
+  **Trade-offs** (placement) tab.
+
+**The through-line across all of them:** *local decisions to stay fast, a shared store for truth,
+atomic ops (Lua) to avoid the overcount race, TTLs so counters self-heal, and a deliberate fail-safe
+posture.* Every one of these companies converged on the same shape — which is the strongest evidence
+that the shape is right.
