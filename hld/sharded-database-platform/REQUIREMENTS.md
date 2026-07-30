@@ -76,3 +76,50 @@ subqueries, and prepared statements.
 
 **The asymmetry to notice:** the *data* is petabytes, but the **topology metadata is tiny and
 critically consistent**. That asymmetry drives the control-plane/data-plane split in the next tab.
+
+---
+
+## Engineering Blogs & Primary Sources
+
+This "build Vitess yourself" design maps directly onto Vitess itself and the companies running it at
+scale. These sources confirm the specific protocols this HLD derives — and in one case, word-for-word.
+
+- **Vitess — Resharding (official docs).**
+  https://vitess.io/docs/reference/vreplication/reshard/
+  The resharding workflow, described exactly as this HLD's **Deep Dives** tab derives it:
+  *"Vitess copies, verifies, and keeps data up-to-date on new shards while the existing shards
+  continue to serve live traffic… the migration occurs with only a few seconds of read-only
+  downtime."* The command sequence — `create` (copy) → `VDiff` (verify) → `SwitchTraffic` (cutover,
+  which **stops writes on the source and waits for the target to catch up**) → `complete` (retire) —
+  is precisely the **copy → catch up → verify → switch → retire** protocol, including the write-freeze
+  at cutover. → backs the **Deep Dives** (online resharding) tab.
+
+- **Slack — "Scaling Datastores at Slack with Vitess" (2020).**
+  https://slack.engineering/scaling-datastores-at-slack-with-vitess/
+  The war story that validates the whole design: Slack runs its monolith and services on Vitess,
+  sharding by **keyspace** (not just by team, which had caused **team hot-spots** — this HLD's hot-key
+  problem). When COVID drove a **50% query-rate jump in one week**, they horizontally resharded a busy
+  keyspace live — *"without resharding and moving to Vitess, we would've been unable to scale… leading
+  to downtime."* → backs the **Scaling** and **Failure Modes** (hot shard) tabs.
+
+- **Vitess — VReplication (design docs).** https://vitess.io/docs/reference/vreplication/vreplication/
+  The change-data-capture engine underneath resharding, online schema changes, and materialized views
+  — the mechanism behind the "catch up" step. Confirms that **online schema change and resharding share
+  one primitive** (this HLD's Deep Dives point that they're the same skeleton). → backs **Deep Dives**
+  (online schema change).
+
+- **PlanetScale — how Vitess handles it (engineering blog).** https://planetscale.com/blog
+  Vitess-as-a-managed-service; their posts on **online DDL, connection pooling, and reparenting** are
+  the operational reality behind this HLD's control-plane. Reinforces the **adopt-don't-build** verdict
+  in the **Trade-offs** tab. (PlanetScale is Vitess's primary commercial steward.)
+
+- **ByteByteGo — "How YouTube Supports Billions of Users" (MySQL → Vitess).**
+  https://blog.bytebytego.com/p/how-youtube-supports-billions-of
+  The origin narrative — YouTube built Vitess when it outgrew one MySQL — and the source that seeded
+  the [Database Scaling](#fu-database-scaling) fundamentals. The scaling *ladder* this platform sits
+  atop. → context for **Requirements**.
+
+**The through-line:** every one of these confirms the same non-obvious claims this HLD makes — that
+resharding is **copy→verify→switch with a seconds-long write freeze**, that the shard key choice
+determines hot-spots, and that at real scale you **adopt Vitess rather than build**. When the
+reference implementation's own docs match your derived protocol step-for-step, the design is sound.
