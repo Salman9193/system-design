@@ -6,6 +6,11 @@ logs, and atomic commit. It's the hardest problem in the module, but you only ne
 high-level shape: why it's needed, how a majority makes it work, what Raft does, and why
 you use it sparingly.
 
+> **Want the mechanism, not just the shape?** The next tab, **Raft — Deep Dive**, works through
+> leader election, log replication, the safety rules (including the commitment subtlety almost
+> everyone gets wrong), and the failure scenarios — at the depth you'd need to implement it or defend
+> it in a design round. It doubles as a study guide for MIT 6.824.
+
 ---
 
 ## The Problem
