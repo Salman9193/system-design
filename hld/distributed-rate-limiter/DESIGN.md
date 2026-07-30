@@ -77,8 +77,9 @@ current window you are:
 estimate = prev_count × (1 − elapsed_fraction) + cur_count
 ```
 **O(1) memory per key**, no boundary doubling, and the error is tiny on real traffic — **Cloudflare
-reported under 1% error** deploying exactly this. This is the sensible default for a distributed
-limiter.
+published that on 400M requests from 270k sources, only 0.003% were wrongly allowed or limited**,
+with an average 6% gap between the real and approximated rate. This is the sensible default for a
+distributed limiter.
 
 ### Token Bucket — for controlled bursts
 A bucket refills at a steady rate up to a cap; each request takes a token. Distributed via a **Lua
