@@ -193,6 +193,56 @@ yes, it parallelizes and fault-tolerates for free.
 
 ---
 
+## Why It's Network-Bound (the lecture's sharpest point)
+
+The paper mentions locality; the 6.824 lecture makes the *arithmetic* concrete, and it's the detail
+that explains every optimization above.
+
+In 2004 the bottleneck wasn't CPU or disk — it was the **network**. The cluster's root switch had
+~100–200 Gbit/s total for **1,800 machines**, which is only **~55 Mbit/s per machine** — *less than
+disk or RAM speed.* And MapReduce's shuffle is **all-to-all**, so about half the shuffle traffic
+crosses that root switch.
+
+```
+what crosses the network:
+  Map reads input from GFS        → avoided by LOCALITY (read the local replica)
+  shuffle: Reduce ← Map output    → the unavoidable one; often as big as the input
+  Reduce writes output to GFS     → replicated for durability
+```
+
+Three design choices fall directly out of this one number:
+- **Locality** exists because reading input locally saves the scarcest resource.
+- **Intermediate data goes to Map-worker local disk, not GFS** — storing it in GFS would mean *two*
+  network trips instead of one. (Note: this is exactly why a failed map task must be *re-run* — its
+  output was local, not replicated.)
+- **Hash-partition into buckets of many keys**, not per-key files — big transfers are far more
+  network-efficient than many tiny ones.
+
+> **The staff lesson:** *the bottleneck resource dictates the architecture.* Identify what's scarce
+> (here, bisection bandwidth), and every major design decision should be explainable as "protecting
+> that resource." When you can do that arithmetic in an interview, you're reasoning like a systems
+> engineer, not reciting a diagram.
+
+---
+
+## The Assumptions It Bakes In
+
+The lecture is blunt about what MapReduce *requires* to work — worth knowing because interviewers
+probe the edges:
+
+- **Fail-stop only.** MapReduce assumes a machine either works correctly or stops. It does **not**
+  tolerate a worker computing *wrong* output from broken hardware/software — that corrupts the job
+  silently. (Byzantine fault tolerance is a different, much harder problem.)
+- **Deterministic, pure Map/Reduce.** Because a task may run twice (backup tasks, crash re-runs),
+  the two runs **must** produce identical output — so Map/Reduce may only read their input: no state,
+  no file I/O, no randomness, no external calls. **The programmer owns this guarantee**, and
+  violating it produces subtly wrong results that no framework check will catch.
+- **No interaction, no streaming.** The model is deliberately just map-then-reduce; no task-to-task
+  communication and no real-time processing. That restriction is *why* auto-parallelization and
+  transparent fault tolerance are even possible.
+
+---
+
 ## Honest Limitations (what 6.824 has you critique)
 
 | Limitation | Consequence | What fixed it |
@@ -221,6 +271,14 @@ yes, it parallelizes and fault-tolerates for free.
 - **Dataflow / Beam** — unified batch + streaming, the model Google published *after* learning
   MapReduce's limits.
 
+**Where it stands today:** Google **retired MapReduce internally** — Jeff Dean confirmed the internal
+codebase was removed after serving since 2003 — replaced by **Flume/FlumeJava** and **Cloud Dataflow**
+(batch + streaming). GFS likewise gave way to **Colossus** (2010), which fixes GFS's single-master
+metadata bottleneck by storing metadata in **Bigtable** and using **erasure coding** instead of 3×
+replication. So the 2004 design is *historically* superseded — but every successor is a direct
+descendant, and the paper remains the clearest teaching of the ideas. External users still run the
+lineage as **Hadoop/Dataproc**.
+
 **The through-line:** every one of these inherited MapReduce's three lessons — **re-execution for
 fault tolerance, locality-aware scheduling, redundant work to kill stragglers** — and relaxed its
 restrictions (in-memory, streaming, richer DAGs). Understanding the 2004 paper is understanding the
@@ -240,3 +298,80 @@ floor the entire modern data stack was built on.
   transform-then-combine-by-key.
 - **Limits:** single master, batch-only, disk-per-stage → **Spark/Flink** relaxed these, but the
   mental model endures.
+
+---
+
+## Lab: Building MapReduce (MIT 6.824 Lab 1)
+
+The paper's ideas only *land* once you build them. Lab 1 has you implement a working MapReduce —
+a **coordinator** (the paper's "master") and **workers** talking over RPC on one machine. This is a
+study companion (architecture, state machine, traps), **not** solution code — the whole value is in
+writing it yourself, and it's graded coursework.
+
+### What you build
+
+```
+  worker ──RPC: "give me a task"──► COORDINATOR
+         ◄──── map task (file X) ───┘   tracks each task: idle → in-progress → done
+  worker: read file → Map() → write mr-X-0 … mr-X-(R-1)   (partition by ihash(key)%nReduce)
+         ──RPC: "map X done"──────► COORDINATOR
+  ...all maps done...
+  worker ──RPC: "give me a task"──► COORDINATOR ──── reduce task Y ───┘
+  worker: read mr-*-Y → sort → group → Reduce() → write mr-out-Y (via temp + atomic rename)
+```
+
+### The build order that avoids pain
+
+Build and test incrementally — this is the single biggest predictor of finishing cleanly:
+
+1. **One map task, no concurrency.** Worker asks for work; coordinator returns one filename; worker
+   reads it, calls `Map`, writes intermediate files. Borrow file-reading from `mrsequential.go`.
+2. **Intermediate file layout** — the structural heart. Each map task writes `nReduce` files named
+   `mr-X-Y` (X = map #, Y = reduce #), partitioned by the provided `ihash(key) % nReduce`, using
+   `json.NewEncoder`. So M×R intermediate files total.
+3. **Reduce phase.** Reduce task Y reads every `mr-*-Y`, sorts by key, groups, calls `Reduce`,
+   writes `mr-out-Y`. Reduces can't start until **all** maps are done — the coordinator needs phase
+   awareness.
+4. **Concurrency + state machine.** The coordinator's RPC handlers run in separate threads, so
+   **lock all shared state.** Model each task `idle → in-progress → completed`; hand out maps, then
+   (once all complete) reduces, then `Done()` returns true.
+5. **Crash recovery** — the tested hard part. Record a start time per handed-out task; re-issue any
+   task in-progress **> 10 seconds** back to idle. Because a "dead" worker may actually be slow and
+   still finish, **two workers can run the same task** — which is why atomic rename is mandatory.
+
+### The traps that eat hours
+
+| Trap | Symptom | Fix |
+|------|---------|-----|
+| **RPC fields not Capitalized** | field arrives empty, no error | capitalize every field (incl. nested structs) — Go RPC only sends exported fields |
+| **Pre-filled reply struct** | RPC silently returns wrong values | always `reply := T{}` then `call(..., &reply)` |
+| **No atomic rename** | `TestCrashWorker` fails intermittently | write to `os.CreateTemp`, then `os.Rename` on completion |
+| **Unlocked shared state** | `-race` failures = graded failures | mutex around all coordinator state |
+| **Backup tasks scheduled too eagerly** | test flags "extraneous tasks" | only after a long delay (≥10s); it's the no-credit challenge |
+
+### How each piece maps to the paper
+
+The lab is the paper made concrete — this is the point of doing it:
+
+| Lab mechanism | Paper concept |
+|---------------|---------------|
+| coordinator re-issues a task after 10s | **fault tolerance via re-execution** (§3.3) |
+| temp file + atomic rename | **atomic commit** of task output (§3.3) |
+| `mr-X-Y` partition by `ihash%nReduce` | the **shuffle** / partitioning function (§4.1) |
+| workers share a filesystem | stands in for **GFS** (single machine ⇒ local dir) |
+| re-run map (local output lost) but not reduce | the local-disk vs. global-FS distinction (§3.3) |
+| backup tasks (challenge) | **straggler mitigation** (§3.6) |
+
+### Testing
+
+`make mr` runs the suite; `make RUN="-run Wc" mr` runs one test. They pass roughly in build order:
+`TestWc`/`TestIndexer` (correctness) → `TestMapParallel`/`TestReduceParallel` (concurrency) →
+`TestCrashWorker` (recovery, the hard one). Green down the list = done.
+
+> **Why this lab is worth the hours:** it's the smallest complete distributed system with real
+> concurrency, real RPC, and real failure handling. Every later lab (Raft, the KV store, sharding)
+> assumes the muscle you build here. And in an interview, *"I implemented MapReduce's coordinator with
+> crash recovery"* is a concrete, credible signal — you've felt the problems the paper describes, not
+> just read about them.
+
+Lab handout: https://pdos.csail.mit.edu/6.824/labs/lab-mr.html
