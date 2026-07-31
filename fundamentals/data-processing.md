@@ -375,3 +375,56 @@ The lab is the paper made concrete — this is the point of doing it:
 > just read about them.
 
 Lab handout: https://pdos.csail.mit.edu/6.824/labs/lab-mr.html
+
+---
+
+## Engineering Blogs & Primary Sources
+
+The MapReduce lineage is unusually well-documented — the landmark papers are all public, and the
+successors' own writeups explain exactly what they fixed. These are keyed to the sections above.
+
+- **Dean & Ghemawat — "MapReduce: Simplified Data Processing on Large Clusters" (OSDI 2004).**
+  https://research.google/pubs/mapreduce-simplified-data-processing-on-large-clusters/
+  The paper this whole guide walks through. The source for the programming model, the master/worker
+  execution, re-execution fault tolerance, locality, and backup tasks. → the entire guide.
+
+- **Zaharia et al. — "Resilient Distributed Datasets: A Fault-Tolerant Abstraction for In-Memory
+  Cluster Computing" (NSDI 2012, Best Paper).**
+  https://www.usenix.org/system/files/conference/nsdi12/nsdi12-final138.pdf
+  **Spark's founding paper**, and the direct answer to MapReduce's biggest limitation. RDDs keep data
+  **in memory** across steps and recover lost partitions by **lineage** (replay the transformations
+  that built them) instead of disk checkpoints — up to **100× faster** on the iterative ML and graph
+  workloads MapReduce handled badly. This *is* the "everything hits disk" fix from the Limitations
+  table. → backs **Honest Limitations** and **Descendants**.
+
+- **Apache Spark — research page.** https://spark.apache.org/research.html
+  The canonical index of Spark papers (RDDs, Spark SQL, GraphX, Structured Streaming) — the concrete
+  descendants that generalized MapReduce into one engine for batch, SQL, graph, and streaming. →
+  backs **Descendants**.
+
+- **Google Cloud — "A peek behind Colossus, Google's file system" (2021).**
+  https://cloud.google.com/blog/products/storage-data-transfer/a-peek-behind-colossus-googles-file-system
+  How Google replaced GFS: **Colossus** stores metadata in **Bigtable** (killing GFS's single-master
+  bottleneck) and uses **erasure coding** instead of 3× replication. The storage layer under
+  MapReduce's successors, and the evolution of the GFS the paper's locality story depends on. → backs
+  **Current status** and connects to [Database Scaling](#fu-database-scaling).
+
+- **Chambers et al. — "FlumeJava: Easy, Efficient Data-Parallel Pipelines" (PLDI 2010).**
+  https://research.google/pubs/flumejava-easy-efficient-data-parallel-pipelines/
+  What Google actually replaced MapReduce with internally: a higher-level pipeline API that compiles a
+  DAG of operations down to an optimized sequence of MapReduce-style stages — removing the "chain many
+  rigid MR passes by hand" pain from the Limitations table. → backs **Current status** and
+  **Descendants**.
+
+- **Apache Hadoop — the open-source MapReduce + HDFS.** https://hadoop.apache.org/
+  The Yahoo!-born implementation that put MapReduce (and a GFS clone, HDFS) in everyone's hands and
+  created the entire "big data" ecosystem. What most people actually ran. → backs **Descendants**.
+
+- **MIT 6.824 — Lab 1: MapReduce.** https://pdos.csail.mit.edu/6.824/labs/lab-mr.html
+  The build-it-yourself lab this guide's companion section maps out. → the **Lab** section.
+
+**The through-line:** the primary sources trace a clean arc — MapReduce (2004) proved the model,
+Hadoop democratized it, **RDDs/Spark** fixed its disk-bound iteration, **FlumeJava/Dataflow**
+fixed its two-stage rigidity, and **Colossus** modernized the storage beneath it. Every successor
+kept the three core lessons (re-execution, locality, straggler mitigation) and relaxed one
+restriction — which is exactly why the 2004 paper is still the right place to start.
