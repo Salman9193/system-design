@@ -42,6 +42,7 @@ FUNDAMENTALS_ORDER = [
     "data-processing",
     "capacity-estimation",
     "caching",
+    "performance-engineering",
     "ai-engineering-primer",
     "llm-inference-serving",
     "embeddings-and-vector-search",
