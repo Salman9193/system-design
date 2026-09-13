@@ -98,6 +98,7 @@ written to that bar.
 - ✅ HLD template: Search Typeahead / Autocomplete (with an **AI Evolution** tab)
 - ✅ **AI HLD template: RAG Knowledge Assistant**
 - ✅ **AI HLD template: LLM Inference Serving Platform**
+- ✅ **HLD template: Notification Service** (LinkedIn ATC + Uber CCG: recipient partitioning, dedup/capping, ML-optimized timing via assignment-problem ILP, transactional vs marketing lanes)
 - ✅ **HLD template: Distributed Rate Limiter** (local fast path + shared store, accuracy/latency/cost triangle, fail-open vs fail-closed, multi-region)
 - ✅ **HLD template: Sharded Database Platform** (design Vitess: online resharding, split-brain prevention, lookup vindexes, connection pooling)
 - ✅ HLD template: Text Segmentation Service (dictionary versioning, index/query consistency, multi-tenant overlays — the productionized jieba)
