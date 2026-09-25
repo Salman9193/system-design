@@ -41,6 +41,7 @@ FUNDAMENTALS_ORDER = [
     "database-scaling",
     "data-processing",
     "capacity-estimation",
+    "observability-and-percentiles",
     "caching",
     "performance-engineering",
     "ai-engineering-primer",
