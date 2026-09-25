@@ -47,6 +47,11 @@ Auth/Security fundamental — flag that and move on rather than rabbit-holing he
 
 ## Observability — Seeing the Communication Layer
 
+> **Why percentiles, not averages — and why the tail dominates at scale:** see the dedicated
+> [Percentiles, Tail Latency & Observability](#fu-observability-and-percentiles) fundamental. This
+> section is the checklist; that page is the reasoning (the fan-out math, SLOs, hedged requests).
+
+
 You can't operate what you can't see. Observability rests on three pillars — **metrics,
 logs, traces** — and the communication layer is where much of it is captured (the
 gateway and load balancer see all traffic).
